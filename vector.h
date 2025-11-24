@@ -20,7 +20,7 @@ void Vector_Resize(Vector* v,int newsize);
  * \param ell pointer to the object
  * \note Do not worry ellement_size data from ell will be copyed
  */
-void Vector_PushBack(Vector* v,void* ell);
+void Vector_PushBack(Vector* v,const void* ell);
 /**
  * \brief Its seems obvious
  * \param v Vector pointer
@@ -50,4 +50,5 @@ void Vector_Free(Vector *v);
  * \brief deletes the last element of vector
  * \param v Dont ask me
  */
+
 void Vector_PopBack(Vector* v);
