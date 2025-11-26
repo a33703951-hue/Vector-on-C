@@ -1,7 +1,16 @@
+#pragma once
 /**
  * \brief Dynamic storage of data (unknown type)
  */
 struct Vector;
+
+/**
+ * \brief makes deep copy of Vector
+ * \param v the source
+ * \return a new identical Vector object
+ */
+Vector* Vector_Copy(Vector* v);
+
 /**
  *  \brief Creates Vector where ellement size is first argument
  *  \param ellement_size Size of one ellement
@@ -52,16 +61,35 @@ void Vector_Free(Vector* _v);
  */
 void Vector_PopBack(Vector* _v);
 
+void* __Vector_begin(Vector* _v);
+
+void* __Vector_end(Vector* _v);
+
+int __Vector_ellsize(Vector* v);
+
+#define VECTOR_FOR(obj,name,type) \
+    for(type* name=(type*)__Vector_begin(obj);\
+        name<(type*)__Vector_end(obj);\
+            name+=1)
+
+
 /**
  * \brief dynamic storage of text
  */
-struct string;
+typedef struct string string;
 
 /**
  * \brief creates a string object
  * \return a pointer to object
  */
 string* CreateString();
+
+/**
+ * \brief copies string
+ * \param o source
+ * \return a identical string object
+ */
+string* String_Copy(string* o);
 
 /**
  * \brief turn string object to a const char*
@@ -81,14 +109,14 @@ void String_Free(string* __obj);
  * \param obj the string object
  * \param s the C string
  */
-void String_addc(string* __obj,const char* _s);
+string* String_addc(string* __obj,const char* _s);
 
 /**
  * \brief adds two string objects together
  * \param obj Dst object
  * \param other Src object
  */
-void String_adds(string* obj,string* other);
+string* String_adds(string* obj,string* other);
 
 /**
  * \brief Returns size of string
@@ -96,3 +124,102 @@ void String_adds(string* obj,string* other);
  * \return size of o
  */
 int String_size(string* o);
+
+/**
+ * \brief sets to a C string
+ * \param o you know
+ * \param s C string to set
+ */
+void String_set(string* o,const char* s);
+
+/**
+ * \brief array but better
+ */
+typedef struct array array;
+/**
+ * \brief creates array
+ * \param size size of array that cant be changed
+ * \param ellsize size of element
+ * \return array object
+ */
+array* CreateArray(int size,int ellsize);
+
+/**
+ * \brief get a pointer to a element from array
+ * \param o array object
+ * \param index index
+ * \return a adress of element
+ */
+void* __Array_get(array* __o,int _index);
+
+#define Array_Get(obj,i,type) *((type*)__Array_get(obj,i))
+
+/**
+ * \brief destroy array object
+ * \param o the object
+ */
+void Array_Free(array* __o);
+
+/**
+ * \brief get the size of array
+ * \param obj a object
+ * \return size of array
+ */
+int Array_size(array* __obj);
+
+/**
+ * \brief copy array object
+ * \param o source
+ * \return new identical array object
+ */
+array* Array_copy(array* o);
+
+#define BINARY 1<<1
+#define RP 1<<2
+#define APPEND 1<<3
+
+/**
+ * \brief a cool version of FILE*
+ */
+typedef struct file file;
+
+/**
+ * \brief a output file object
+ */
+typedef struct Ofile Ofile;
+
+/**
+ * \brief creates Ofile object
+ * \param name file name
+ * \param flags flags
+ */
+Ofile* CreateOfile(const char* name,int flags);
+
+/**
+ * \brief writes to a Ofile object
+ * \param file the file object
+ * \param bytes the size of data
+ * \param data adress
+ */
+void Ofile_write(Ofile* file,int bytes,const void* data);
+
+/**
+ * \brief a input file object
+ */
+typedef struct Ifile Ifile;
+
+/**
+ * \brief create Ifile object
+ * \param name a file name
+ * \param flags flags
+ */
+Ifile* CreateIfile(const char* name,int flags);
+
+/**
+ * \brief read from Ifile object
+ * \param file the Ifile object
+ * \param bytes the size of data
+ * \param a adress of data
+ */
+void Ifile_read(Ifile* file,int bytes,void* dst);
+
