@@ -188,6 +188,8 @@ const char* GetError();
  */
 typedef struct file file;
 
+void File_close(void* file);
+
 /**
  * \brief a output file object
  */
