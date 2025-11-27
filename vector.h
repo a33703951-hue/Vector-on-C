@@ -54,6 +54,9 @@ void* Vector_Get(Vector* _v,int __index);
  * \param v Kinda obvious
  * \note After you free Vector can not be used
  */
+
+#define VECTOR_GET(obj,index,type) *(type*)Vector_Get(obj,(index))
+
 void Vector_Free(Vector* _v);
 /**
  * \brief deletes the last element of vector
@@ -173,6 +176,8 @@ int Array_size(array* __obj);
  * \return new identical array object
  */
 array* Array_copy(array* o);
+
+const char* GetError();
 
 #define BINARY 1<<1
 #define RP 1<<2
