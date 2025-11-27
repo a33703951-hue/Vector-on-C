@@ -218,9 +218,17 @@ __declspec(dllexport) Ifile* CreateIfile(const char* name,int flags){
     String_addc(mode,"r");
     if ((flags & BINARY)!=0)
         String_addc(mode,"b");
-    else if ((flags & RP)!=0)
+    if ((flags & RP)!=0)
         String_addc(mode,"+");
     n->f.f=fopen(name,String_cstr(mode));
+    if (!n->f.f){
+        string* err=CreateString();
+        String_addc(err,strerror(errno));
+        String_addc(err,": Ifile");
+        memcpy(__errbuf,String_cstr(err),String_size(err));
+        String_Free(err);
+        return NULL;
+    }
     String_Free(mode);
     return n;
 }
@@ -229,9 +237,10 @@ __declspec(dllexport) void Ifile_read(Ifile* file,int bytes,void* dst){
     fread(dst,1,bytes,file->f.f);
 }
 
-__declspec(dllexport) void File_close(file* file){
-    fclose(file->f);
-    free(file);
+__declspec(dllexport) void File_close(void* f){
+    file* fil=(file*)f;
+    fclose(fil->f);
+    free(fil);
 }
 
 typedef struct Ofile{
@@ -248,7 +257,18 @@ __declspec(dllexport) Ofile* CreateOfile(const char* name,int flags){
     if ((flags & BINARY)!=0){
         String_addc(mode,"b");
     }
+    if ((flags & RP)!=0){
+        String_addc(mode,"+");
+    }
     n->f.f=fopen(name,String_cstr(mode));
+    if (!n->f.f){
+        string* err=CreateString();
+        String_addc(err,strerror(errno));
+        String_addc(err,": Ofile");
+        memcpy(__errbuf,String_cstr(err),String_size(err));
+        String_Free(err);
+        return NULL;
+    }
     String_Free(mode);
     return n;
 }
