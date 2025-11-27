@@ -200,9 +200,9 @@ __declspec(dllexport) void String_set(string* o,const char* s){
     o->__curr=strlen(s);
 }
 
-#define BINARY 1<<1
-#define RP 1<<2
-#define APPEND 1<<3
+#define BINARY (1<<1)
+#define RP (1<<2)
+#define APPEND (1<<3)
 
 typedef struct file{
     FILE* f;
@@ -237,15 +237,19 @@ __declspec(dllexport) void Ifile_read(Ifile* file,int bytes,void* dst){
     fread(dst,1,bytes,file->f.f);
 }
 
-__declspec(dllexport) void File_close(void* f){
-    file* fil=(file*)f;
-    fclose(fil->f);
-    free(fil);
+__declspec(dllexport) void IFile_close(Ifile* f){
+    fclose(f->f.f);
+    free(f->f.f);
 }
 
 typedef struct Ofile{
     file f;
 } Ofile;
+
+__declspec(dllexport) void OFile_close(Ofile* f){
+    fclose(f->f.f);
+    free(f->f.f);
+}
 
 __declspec(dllexport) Ofile* CreateOfile(const char* name,int flags){
     Ofile* n=(Ofile*)malloc(sizeof(Ofile));
