@@ -1,6 +1,31 @@
+/*
+MIT License
+
+Copyright (c) 2025 Kaldbay Alihan
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+*/
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
+#include <errno.h>
+//#include "vector.h"
 
 char __errbuf[1024];
 
@@ -14,7 +39,7 @@ typedef struct array{
     int __size;
 } array;
 
-__declspec(dllexport) array* CreateArray(int size,int ellsize){
+array* CreateArray(int size,int ellsize){
     array* obj=(array*)malloc(sizeof(array));
     obj->__data=malloc(size*ellsize);
     obj->__ellsize=ellsize;
@@ -22,7 +47,7 @@ __declspec(dllexport) array* CreateArray(int size,int ellsize){
     return obj;
 }
 
-__declspec(dllexport) void* __Array_get(array* o,int index){
+void* __Array_get(array* o,int index){
     if (index>o->__size){
         const char* mes="Out of range: array";
         memcpy(__errbuf,mes,strlen(mes)+1);
@@ -31,22 +56,22 @@ __declspec(dllexport) void* __Array_get(array* o,int index){
     return ((char*)(o->__data))+(o->__ellsize*index);
 }
 
-__declspec(dllexport) void Array_Free(array* o){
+void Array_Free(array* o){
     free(o->__data);
     free(o);
 }
 
-__declspec(dllexport) int Array_size(array* obj){
+int Array_size(array* obj){
     return obj->__size;
 }
 
-__declspec(dllexport) array* Array_copy(array* o){
+array* Array_copy(array* o){
     array* n=CreateArray(o->__size,o->__ellsize);
     memcpy(n->__data,o->__data,o->__size*o->__ellsize);
     return n;
 }
 
-typedef struct{
+typedef struct Vector{
     void* __data;
     int __size;
     int __pos;
@@ -56,15 +81,15 @@ typedef struct{
 #define __VECTOR_DEFAULT_CAPACITY 5
 #define __STRING_DEFAULT_CAPACITY 10
 
-__declspec(dllexport) void* __Vector_begin(Vector* v){
+void* __Vector_begin(Vector* v){
     return v->__data;
 }
 
-__declspec(dllexport) void* __Vector_end(Vector* v){
+void* __Vector_end(Vector* v){
     return ((char*)(v->__data))+(v->__pos*v->__ellsize);
 }
 
-__declspec(dllexport) Vector* CreateVector(int ellement_size){
+Vector* CreateVector(int ellement_size){
     Vector* v=(Vector*)malloc(sizeof(Vector));
     v->__ellsize=ellement_size;
     v->__pos=0;
@@ -73,7 +98,7 @@ __declspec(dllexport) Vector* CreateVector(int ellement_size){
     return v;
 }
 
-__declspec(dllexport) void Vector_Resize(Vector* v,int newsize){
+void Vector_Resize(Vector* v,int newsize){
     void* n=malloc(v->__ellsize*newsize);
     memcpy(n,v->__data,v->__pos*v->__ellsize);
     free(v->__data);
@@ -82,7 +107,16 @@ __declspec(dllexport) void Vector_Resize(Vector* v,int newsize){
     
 }
 
-__declspec(dllexport) void Vector_PushBack(Vector* v,const void* ell){
+void Vector_erease(Vector* v,int pos){
+    if (pos<v->__size && pos>=0){
+        const char* mes="Invalid pos to erease: Vector";
+        memcpy(__errbuf,mes,strlen(mes)+1);
+        return;
+    }
+    //memcpy((char*)v->__data+pos,);
+}
+
+void Vector_PushBack(Vector* v,const void* ell){
     char* ptr=(char*)v->__data;
     if (v->__pos>=v->__size)
         Vector_Resize(v,v->__size*2);
@@ -90,7 +124,7 @@ __declspec(dllexport) void Vector_PushBack(Vector* v,const void* ell){
     v->__pos+=1;
 }
 
-__declspec(dllexport) void Vector_PopBack(Vector* v){
+void Vector_PopBack(Vector* v){
     if (v->__pos==0){
         const char* mes="Already in the end cannot Pop back: Vector";
         memcpy(__errbuf,mes,strlen(mes)+1);
@@ -99,19 +133,19 @@ __declspec(dllexport) void Vector_PopBack(Vector* v){
     v->__pos-=1;
 }
 
-__declspec(dllexport) int Vector_Size(Vector* v){
+int Vector_Size(Vector* v){
     return v->__pos;
 }
 
-__declspec(dllexport) int Vector_Capacity(Vector* v){
+int Vector_Capacity(Vector* v){
     return v->__size;
 }
 
-__declspec(dllexport) int __Vector_ellsize(Vector* v){
+int __Vector_ellsize(Vector* v){
     return v->__ellsize;
 }
 
-__declspec(dllexport) void* Vector_Get(Vector* v,int index){
+void* Vector_Get(Vector* v,int index){
     if (index>=v->__pos || index<0){
         const char* mes="Out of range: Vector";
         memcpy(__errbuf,mes,strlen(mes)+1);
@@ -122,14 +156,14 @@ __declspec(dllexport) void* Vector_Get(Vector* v,int index){
     return a;
 }
 
-__declspec(dllexport) Vector* Vector_Copy(Vector* v){
+Vector* Vector_Copy(Vector* v){
     Vector* n=CreateVector(v->__ellsize);
     Vector_Resize(n,v->__size);
     memcpy(n->__data,v->__data,v->__pos*v->__ellsize);
     return n;
 }
 
-__declspec(dllexport) void Vector_Free(Vector *v){
+void Vector_Free(Vector *v){
     free(v->__data);
     free(v);
 }
@@ -140,7 +174,7 @@ typedef struct string{
     int __curr;
 } string;
 
-__declspec(dllexport) string* CreateString(){
+string* CreateString(){
     string* obj=(string*)malloc(sizeof(string));
     obj->__data=(char*)malloc(__STRING_DEFAULT_CAPACITY);
     obj->__size=__STRING_DEFAULT_CAPACITY;
@@ -149,17 +183,17 @@ __declspec(dllexport) string* CreateString(){
     return obj;
 }
 
-__declspec(dllexport) const char* String_cstr(string* obj){
+const char* String_cstr(string* obj){
     obj->__data[obj->__curr]='\0';
     return obj->__data;
 }
 
-__declspec(dllexport) void String_Free(string* obj){
+void String_Free(string* obj){
     free(obj->__data);
     free(obj);
 }
 
-__declspec(dllexport) void __String_resize(string* s,int size){
+void __String_resize(string* s,int size){
     char* data=(char*)malloc(size);
     memcpy(data,s->__data,s->__curr);
     free(s->__data);
@@ -167,7 +201,7 @@ __declspec(dllexport) void __String_resize(string* s,int size){
     s->__size=size;
 }
 
-__declspec(dllexport) string* String_addc(string* obj,const char* s){
+string* String_addc(string* obj,const char* s){
     if (obj->__curr+strlen(s)+1>obj->__size)
         __String_resize(obj,obj->__size+(strlen(s)*2));
     memcpy(obj->__data+obj->__curr,s,strlen(s));
@@ -176,7 +210,7 @@ __declspec(dllexport) string* String_addc(string* obj,const char* s){
     return obj;
 }
 
-__declspec(dllexport) string* String_adds(string* obj,string* other){
+string* String_adds(string* obj,string* other){
     if (obj->__curr+other->__curr+1>obj->__size)
         __String_resize(obj,other->__size*2);
     memcpy(obj->__data+obj->__curr,other->__data,other->__curr);
@@ -185,17 +219,17 @@ __declspec(dllexport) string* String_adds(string* obj,string* other){
     return obj;
 }
 
-__declspec(dllexport) string* String_Copy(string* o){
+string* String_Copy(string* o){
     string* n=CreateString();
     String_adds(n,o);
     return n;
 }
 
-__declspec(dllexport) int String_size(string* o){
+int String_size(string* o){
     return o->__curr;
 }
 
-__declspec(dllexport) void String_set(string* o,const char* s){
+void String_set(string* o,const char* s){
     memcpy(o->__data,s,strlen(s));
     o->__curr=strlen(s);
 }
@@ -212,7 +246,7 @@ typedef struct Ifile{
     file f;
 } Ifile;
 
-__declspec(dllexport) Ifile* CreateIfile(const char* name,int flags){
+Ifile* CreateIfile(const char* name,int flags){
     Ifile* n=(Ifile*)malloc(sizeof(Ifile));
     string* mode=CreateString();
     String_addc(mode,"r");
@@ -233,11 +267,11 @@ __declspec(dllexport) Ifile* CreateIfile(const char* name,int flags){
     return n;
 }
 
-__declspec(dllexport) void Ifile_read(Ifile* file,int bytes,void* dst){
+void Ifile_read(Ifile* file,int bytes,void* dst){
     fread(dst,1,bytes,file->f.f);
 }
 
-__declspec(dllexport) void IFile_close(Ifile* f){
+void IFile_close(Ifile* f){
     fclose(f->f.f);
     free(f->f.f);
 }
@@ -246,12 +280,12 @@ typedef struct Ofile{
     file f;
 } Ofile;
 
-__declspec(dllexport) void OFile_close(Ofile* f){
+void OFile_close(Ofile* f){
     fclose(f->f.f);
     free(f->f.f);
 }
 
-__declspec(dllexport) Ofile* CreateOfile(const char* name,int flags){
+Ofile* CreateOfile(const char* name,int flags){
     Ofile* n=(Ofile*)malloc(sizeof(Ofile));
     string* mode=CreateString();
     if ((flags & APPEND)!=0)
@@ -277,6 +311,6 @@ __declspec(dllexport) Ofile* CreateOfile(const char* name,int flags){
     return n;
 }
 
-__declspec(dllexport) void Ofile_write(Ofile* file,int bytes,const void* data){
+void Ofile_write(Ofile* file,int bytes,const void* data){
     fwrite(data,1,bytes,file->f.f);
 }
