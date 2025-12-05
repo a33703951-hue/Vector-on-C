@@ -45,6 +45,11 @@ Vector* CreateVector(int __ellement_size);
  * \param v Vector pointer
  * \param newsize The new size of Vector
  */
+
+/*
+*/
+void Vector_erease(Vector* v,int pos);
+
 void Vector_Resize(Vector* _v,int __newsize);
 /**
  * \brief Adds element to the end of Vector

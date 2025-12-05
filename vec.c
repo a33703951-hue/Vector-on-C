@@ -25,9 +25,9 @@ SOFTWARE.
 #include <string.h>
 #include <stdio.h>
 #include <errno.h>
-//#include "vector.h"
+#include "vector.h"
 
-char __errbuf[1024];
+static char __errbuf[1024];
 
 const char* GetError(){
     return __errbuf;
@@ -108,13 +108,18 @@ void Vector_Resize(Vector* v,int newsize){
 }
 
 void Vector_erease(Vector* v,int pos){
-    if (pos<v->__size && pos>=0){
+    if (pos>v->__pos || pos<0){
         const char* mes="Invalid pos to erease: Vector";
         memcpy(__errbuf,mes,strlen(mes)+1);
         return;
     }
-    //memcpy((char*)v->__data+pos,);
+    memcpy((char*)v->__data+(v->__ellsize*pos),
+    (char*)v->__data+(v->__ellsize*(pos+1)),
+    v->__pos-pos);
+    v->__pos--;
 }
+
+
 
 void Vector_PushBack(Vector* v,const void* ell){
     char* ptr=(char*)v->__data;
@@ -233,10 +238,6 @@ void String_set(string* o,const char* s){
     memcpy(o->__data,s,strlen(s));
     o->__curr=strlen(s);
 }
-
-#define BINARY (1<<1)
-#define RP (1<<2)
-#define APPEND (1<<3)
 
 typedef struct file{
     FILE* f;
