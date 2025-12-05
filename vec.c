@@ -108,14 +108,14 @@ void Vector_Resize(Vector* v,int newsize){
 }
 
 void Vector_erease(Vector* v,int pos){
-    if (pos>v->__pos || pos<0){
+    if (pos>=v->__pos || pos<0){
         const char* mes="Invalid pos to erease: Vector";
         memcpy(__errbuf,mes,strlen(mes)+1);
         return;
     }
     memcpy((char*)v->__data+(v->__ellsize*pos),
     (char*)v->__data+(v->__ellsize*(pos+1)),
-    v->__pos-pos);
+    (v->__pos-pos-1)*v->__ellsize);
     v->__pos--;
 }
 
