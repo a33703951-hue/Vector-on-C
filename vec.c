@@ -245,6 +245,12 @@ void String_set(string* o,const char* s){
     o->__curr=strlen(s);
 }
 
+string* CreateStringWithStr(const char* str){
+    string* res=CreateString();
+    String_addc(res,str);
+    return res;
+}
+
 typedef struct file{
     FILE* f;
 } file;
@@ -320,4 +326,43 @@ Ofile* CreateOfile(const char* name,int flags){
 
 void Ofile_write(Ofile* file,int bytes,const void* data){
     fwrite(data,1,bytes,file->f.f);
+}
+
+void Flag_free(Flag* o){
+    String_Free(o->name);
+}
+
+State CreateState(){
+    State res;
+    res.flags=CreateVector(sizeof(Flag));
+    return res;
+}
+
+void State_free(State* o){
+    VECTOR_FOR(o->flags,i,Flag){
+        Flag_free(i);
+    }
+    Vector_Free(o->flags);
+}
+
+int State_isOn(State* o,const char* name){
+    VECTOR_FOR(o->flags,i,Flag){
+        if (strcmp(String_cstr(i->name),name)==0)
+            if (i->state)
+                return 1;
+            else 
+                return 0;
+    }
+    return -1;
+}
+
+void State_set(State* o,const char* name,int to){
+    VECTOR_FOR(o->flags,i,Flag){
+        if (strcmp(String_cstr(i->name),name)==0){
+            i->state=to;
+            return;
+        }
+    }
+    Flag n={CreateStringWithStr(name),to};
+    Vector_PushBack(o->flags,&n);
 }

@@ -167,6 +167,8 @@ int String_size(string* o);
  */
 void String_set(string* o,const char* s);
 
+string* CreateStringWithStr(const char* str);
+
 /**
  * \brief array but better
  */
@@ -262,3 +264,21 @@ Ifile* CreateIfile(const char* name,int flags);
  */
 void Ifile_read(Ifile* file,int bytes,void* dst);
 
+typedef struct Flag{
+    string* name;
+    int state;
+} Flag;
+
+void Flag_free(Flag o);
+
+typedef struct State{
+    Vector* flags;
+} State;
+
+State CreateState();
+
+void State_free(State o);
+
+int State_isOn(State o,const char* name);
+
+void State_set(State o,const char* name,int to);
