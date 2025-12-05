@@ -119,7 +119,13 @@ void Vector_erease(Vector* v,int pos){
     v->__pos--;
 }
 
-
+void Vector_insert(Vector* v,int pos,const void* data){
+    memcpy((char*)v->__data+(v->__ellsize*(pos+1)),
+    (char*)v->__data+(v->__ellsize*pos),
+    (v->__pos-pos)*v->__ellsize);
+    memcpy((char*)v->__data+(v->__ellsize*pos),data,v->__ellsize);
+    v->__pos+=1;
+}
 
 void Vector_PushBack(Vector* v,const void* ell){
     char* ptr=(char*)v->__data;

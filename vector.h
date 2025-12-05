@@ -50,6 +50,10 @@ Vector* CreateVector(int __ellement_size);
 */
 void Vector_erease(Vector* v,int pos);
 
+/*
+*/
+void Vector_insert(Vector* v,int pos,const void* data);
+
 void Vector_Resize(Vector* _v,int __newsize);
 /**
  * \brief Adds element to the end of Vector
