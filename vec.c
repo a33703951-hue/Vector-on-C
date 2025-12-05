@@ -121,8 +121,8 @@ void Vector_erease(Vector* v,int pos){
 
 void Vector_insert(Vector* v,int pos,const void* data){
     memcpy((char*)v->__data+(v->__ellsize*(pos+1)),
-    (char*)v->__data+(v->__ellsize*pos),
-    (v->__pos-pos)*v->__ellsize);
+        (char*)v->__data+(v->__ellsize*pos),
+        (v->__pos-pos)*v->__ellsize);
     memcpy((char*)v->__data+(v->__ellsize*pos),data,v->__ellsize);
     v->__pos+=1;
 }
