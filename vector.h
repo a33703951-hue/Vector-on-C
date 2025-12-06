@@ -21,7 +21,17 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
-#pragma once
+#ifndef VEC_C
+#def VEC_C
+
+#define ForcelyCast(from,to,obj,result) { \
+    to* res=(to*)malloc(sizeof(to));\
+    memcpy(res,(to*)&obj,sizeof(from));\
+    to ret=*res;\
+    free(res); \
+    result=ret; \
+}
+
 /**
  * \brief Dynamic storage of data (unknown type)
  */
@@ -281,4 +291,6 @@ void State_free(State o);
 
 int State_isOn(State o,const char* name);
 
+
 void State_set(State o,const char* name,int to);
+#endif
