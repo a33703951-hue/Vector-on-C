@@ -291,9 +291,9 @@ Ifile* CreateIfile(const char* name,int flags){
     Ifile* n=(Ifile*)malloc(sizeof(Ifile));
     string* mode=CreateString();
     String_addc(mode,"r");
-    if ((flags & BINARY)!=0)
+    if (flags & BINARY)
         String_addc(mode,"b");
-    if ((flags & RP)!=0)
+    if (flags & RP)
         String_addc(mode,"+");
     n->f.f=fopen(name,String_cstr(mode));
     if (!n->f.f){
@@ -333,10 +333,10 @@ Ofile* CreateOfile(const char* name,int flags){
         String_addc(mode,"a");
     else    
         String_addc(mode,"w");
-    if ((flags & BINARY)!=0){
+    if (flags & BINARY){
         String_addc(mode,"b");
     }
-    if ((flags & RP)!=0){
+    if (flags & RP){
         String_addc(mode,"+");
     }
     n->f.f=fopen(name,String_cstr(mode));
@@ -394,4 +394,5 @@ void State_set(State* o,const char* name,int to){
     Flag n={CreateStringWithStr(name),to};
     Vector_PushBack(o->flags,&n);
 }
+
 
