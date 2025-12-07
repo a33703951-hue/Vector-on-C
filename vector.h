@@ -24,12 +24,12 @@ SOFTWARE.
 #ifndef VEC_C
 #def VEC_C
 
-#define ForcelyCast(from,to,obj,result) { \
-    to* res=(to*)malloc(sizeof(to));\
-    memcpy(res,(to*)&obj,sizeof(from));\
-    to ret=*res;\
-    free(res); \
-    result=ret; \
+#define ForcelyCast(ForcelyCast_from,ForcelyCast_to,ForcelyCast_obj,ForcelyCast_result) { \
+    ForcelyCast_to* ForcelyCast_res=(ForcelyCast_to*)malloc(sizeof(ForcelyCast_to));\
+    memcpy(ForcelyCast_res,(ForcelyCast_to*)&ForcelyCast_obj,sizeof(ForcelyCast_from));\
+    ForcelyCast_to ForcelyCast_ret=*ForcelyCast_res;\
+    free(ForcelyCast_res); \
+    ForcelyCast_result=ForcelyCast_ret; \
 }
 
 /**
@@ -294,3 +294,4 @@ int State_isOn(State o,const char* name);
 
 void State_set(State o,const char* name,int to);
 #endif
+
