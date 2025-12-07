@@ -24,33 +24,7 @@ SOFTWARE.
 #ifndef VEC_C
 #def VEC_C
 
-typedef char*(*StrFunc)(void*);
-typedef void*(*AddFunc)(const void*,const void*);
-typedef void*(*SubFunc)(const void*,const void*);
-typedef void*(*MulFunc)(const void*,const void*);
-typedef void*(*DivFunc)(const void*,const void*);
-typedef void*(*CopyFunc)(const void*);
 
-typedef struct BasicObj{
-    StrFunc str;
-    AddFunc add;
-    MulFunc mul;
-    DivFunc di;
-    SubFunc sub;
-    CopyFunc copy;
-} BasicObj;
-
-typedef struct Var{
-    BasicObj* var;
-} Var;
-
-void Var_set(Var* obj,BasicObj* o){
-    obj->var=o;
-}
-
-char* Var_str(Var* o){
-    return o->var->str(o->var);
-}
 
 #define ForcelyCast(ForcelyCast_from,ForcelyCast_to,ForcelyCast_obj,ForcelyCast_result) { \
     ForcelyCast_to* ForcelyCast_res=(ForcelyCast_to*)malloc(sizeof(ForcelyCast_to));\
@@ -322,5 +296,6 @@ int State_isOn(State o,const char* name);
 
 void State_set(State o,const char* name,int to);
 #endif
+
 
 
