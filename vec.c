@@ -27,6 +27,34 @@ SOFTWARE.
 #include <errno.h>
 #include "vector.h"
 
+typedef char*(*StrFunc)(void*);
+typedef void*(*AddFunc)(const void*,const void*);
+typedef void*(*SubFunc)(const void*,const void*);
+typedef void*(*MulFunc)(const void*,const void*);
+typedef void*(*DivFunc)(const void*,const void*);
+typedef void*(*CopyFunc)(const void*);
+
+typedef struct BasicObj{
+    StrFunc str;
+    AddFunc add;
+    MulFunc mul;
+    DivFunc di;
+    SubFunc sub;
+    CopyFunc copy;
+} BasicObj;
+
+typedef struct Var{
+    BasicObj* var;
+} Var;
+
+void Var_set(Var* obj,BasicObj* o){
+    obj->var=o;
+}
+
+char* Var_str(Var* o){
+    return o->var->str(o->var);
+}
+
 static char __errbuf[1024];
 
 const char* GetError(){
@@ -366,3 +394,4 @@ void State_set(State* o,const char* name,int to){
     Flag n={CreateStringWithStr(name),to};
     Vector_PushBack(o->flags,&n);
 }
+
