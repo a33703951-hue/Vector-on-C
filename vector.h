@@ -22,7 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 */
 #ifndef VEC_C
-#def VEC_C
+#define VEC_C
 
 
 
@@ -281,7 +281,7 @@ typedef struct Flag{
     int state;
 } Flag;
 
-void Flag_free(Flag o);
+void Flag_free(Flag* o);
 
 typedef struct State{
     Vector* flags;
@@ -289,12 +289,12 @@ typedef struct State{
 
 State CreateState();
 
-void State_free(State o);
+void State_free(State* o);
 
-int State_isOn(State o,const char* name);
+int State_isOn(State* o,const char* name);
 
 
-void State_set(State o,const char* name,int to);
+void State_set(State* o,const char* name,int to);
 #endif
 
 
