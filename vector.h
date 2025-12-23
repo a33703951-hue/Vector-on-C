@@ -23,8 +23,9 @@ SOFTWARE.
 */
 #ifndef VEC_C
 #define VEC_C
+#include <stdlib.h>
 
-
+#define new(type,count) (type*)malloc(sizeof(type)*count)
 
 #define ForcelyCast(ForcelyCast_from,ForcelyCast_to,ForcelyCast_obj,ForcelyCast_result) { \
     ForcelyCast_to* ForcelyCast_res=(ForcelyCast_to*)malloc(sizeof(ForcelyCast_to));\
@@ -293,8 +294,56 @@ void State_free(State* o);
 
 int State_isOn(State* o,const char* name);
 
-
 void State_set(State* o,const char* name,int to);
+
+/**
+ * \brief a wrap around pthread_t
+ */
+typedef struct Thread Thread;
+
+/**
+ * \brief Create a Thread object
+ */
+Thread* CreateThread();
+
+/**
+ * \brief launch a Thread
+ * \param o a Object
+ * \param func a function to call
+ * \param args a pointer at parameters to call function with
+ */
+void Thread_start(Thread* o,void* (*func)(void*),void* args);
+
+/**
+ * \brief detaches a Thread
+ * \param o a Thread object
+ */
+void Thread_detach(Thread* o);
+
+/**
+ * \brief a Mutex, wrap around pthread_mutex_t
+ */
+typedef struct Mutex Mutex;
+
+/**
+ * \brief Creates a Mutex
+ */
+Mutex* Mutex_create();
+
+/**
+ * \brief a locks access to other threads to data
+ * \param o object
+ */
+void Mutex_lock(Mutex* o);
+
+/**
+ * \brief unlocks a mutex lock
+ * \param o object
+ */
+void Mutex_unlock(Mutex* o);
+
+
+
 #endif
 
 

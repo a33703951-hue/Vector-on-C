@@ -25,6 +25,8 @@ SOFTWARE.
 #include <string.h>
 #include <stdio.h>
 #include <errno.h>
+#include <unistd.h>
+#include <pthread.h>
 #include "vector.h"
 
 typedef char*(*StrFunc)(void*);
@@ -395,4 +397,66 @@ void State_set(State* o,const char* name,int to){
     Vector_PushBack(o->flags,&n);
 }
 
+typedef struct Thread{
+    pthread_t thread;
+} Thread;
 
+Thread* CreateThread(){
+    Thread* t=malloc(sizeof(Thread));
+    return t;
+}
+
+void Thread_start(Thread* o,void* (*func)(void*),void* args){
+    pthread_create(
+        o->thread,
+        NULL,
+        func,
+        args
+    );
+}
+
+void Thread_detach(Thread* o){
+    pthread_detach(o->thread);
+}
+
+typedef struct Mutex{
+    pthread_mutex_t mutex;
+} Mutex;
+
+Mutex* Mutex_create(){
+    Mutex* res=malloc(sizeof(Mutex));
+    pthread_mutex_init(&res->mutex,NULL);
+    return res;
+}
+
+void Mutex_lock(Mutex* o){
+    pthread_mutex_lock(&o->mutex);
+}
+
+void Mutex_unlock(Mutex* o){
+    pthread_mutex_unlock(&o->mutex);
+}
+
+typedef struct ConditionVariable{
+    pthread_cond_t cv;
+    Mutex* mtx;
+} ConditionVariable;
+
+ConditionVariable* CreateConditionVariable(Mutex* m){
+    ConditionVariable* res=malloc(sizeof(ConditionVariable));
+    res->mtx=m;
+    pthread_cond_init(
+        &res->mtx->mutex,
+        NULL
+    );
+    return res;
+}
+
+void ConditonVariable_wait(ConditionVariable* o,int (*func)()){
+    while (!func()){
+        pthread_cond_wait(
+            &o->cv,
+            &o->mtx->mutex
+        );
+    }
+}
