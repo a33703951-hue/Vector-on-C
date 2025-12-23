@@ -438,13 +438,11 @@ void Mutex_unlock(Mutex* o){
 }
 
 typedef struct ConditionVariable{
-    pthread_cond_t cv;
-    Mutex* mtx;
+    pthread_cond_t cv;Mutex* mtx;
 } ConditionVariable;
 
-ConditionVariable* CreateConditionVariable(Mutex* m){
+ConditionVariable* CreateConditionVariable(){
     ConditionVariable* res=malloc(sizeof(ConditionVariable));
-    res->mtx=m;
     pthread_cond_init(
         &res->mtx->mutex,
         NULL
@@ -452,11 +450,11 @@ ConditionVariable* CreateConditionVariable(Mutex* m){
     return res;
 }
 
-void ConditonVariable_wait(ConditionVariable* o,int (*func)()){
+void ConditonVariable_wait(ConditionVariable* o,int (*func)(),Mutex* m){
     while (!func()){
         pthread_cond_wait(
             &o->cv,
-            &o->mtx->mutex
+            &m->mutex
         );
     }
 }
