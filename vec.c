@@ -408,11 +408,17 @@ Thread* CreateThread(){
 
 void Thread_start(Thread* o,void* (*func)(void*),void* args){
     pthread_create(
-        o->thread,
+        &o->thread,
         NULL,
         func,
         args
     );
+}
+
+void* Thread_join(Thread* o){
+    void* res;
+    pthread_join(o->thread,&res);
+    return res;
 }
 
 void Thread_detach(Thread* o){
@@ -450,11 +456,19 @@ ConditionVariable* CreateConditionVariable(){
     return res;
 }
 
-void ConditonVariable_wait(ConditionVariable* o,int (*func)(),Mutex* m){
+void ConditonVariable_waitCond(ConditionVariable* o,int (*func)(),Mutex* m){
     while (!func()){
         pthread_cond_wait(
             &o->cv,
             &m->mutex
         );
     }
+}
+
+void ConditionVariable_wait(ConditionVariable* o,Mutex* m){
+    pthread_cond_wait(&o->cv,&m->mutex);
+}
+
+void ConditionVariable_notify(ConditionVariable* o){
+    pthread_cond_signal(&o->cv);
 }
